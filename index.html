@@ -1,0 +1,3055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpongeBob: Sync-Aware Harmonious Audio-Visual Generative Editing</title>
+  <meta name="description" content="SpongeBob is the first framework for joint audio-visual editing within a unified dual-stream diffusion process.">
+
+  <!-- Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&family=Noto+Serif:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    :root, [data-theme="warm"] {
+      --primary: #2a2010;
+      --primary-light: #3a2812;
+      --accent: #c9a84c;
+      --accent-dark: #b08d3a;
+      --accent-light: #dfc06a;
+      --accent-glow: rgba(201,168,76,0.3);
+      --teal: #d4a04a;
+      --emerald: #b8860b;
+      --lime: #daa520;
+      --bg-white: #fdfbf7;
+      --bg-light: #f5f0e6;
+      --bg-dark: #1e1608;
+      --bg-card: rgba(255,253,248,0.94);
+      --text-dark: #2a2010;
+      --text-medium: #5c4a30;
+      --text-light: #8c7a5e;
+      --border: #e0d6c4;
+      --border-glow: rgba(201,168,76,0.2);
+      --shadow-sm: 0 2px 8px rgba(42,32,16,0.06);
+      --shadow-md: 0 4px 20px rgba(42,32,16,0.1);
+      --shadow-lg: 0 8px 40px rgba(42,32,16,0.15);
+      --shadow-glow: 0 0 30px rgba(201,168,76,0.15);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --hero-bg: linear-gradient(160deg, #2a2010 0%, #3a2812 30%, #2e2214 60%, #1e1608 100%);
+      --hero-title-color: rgba(255,240,210,0.95);
+      --hero-sub-color: rgba(255,220,160,0.7);
+      --hero-scroll-color: rgba(255,220,160,0.5);
+      --hero-blob1: rgba(201,168,76,0.15);
+      --hero-blob2: rgba(201,168,76,0.08);
+      --nav-bg: linear-gradient(135deg, rgba(42,32,16,0.97), rgba(58,40,18,0.97));
+      --nav-border: rgba(201,168,76,0.3);
+      --nav-shadow: 0 2px 20px rgba(26,20,8,0.25);
+      --nav-link-color: rgba(255,220,160,0.75);
+      --nav-link-hover: #fcd34d;
+      --nav-sep: rgba(201,168,76,0.25);
+      --tab-bg: linear-gradient(135deg, #3a2812, #2a2010);
+      --tab-border: rgba(201,168,76,0.25);
+      --tab-color: rgba(255,220,160,0.6);
+      --tab-hover: #fcd34d;
+      --tab-active-bg: linear-gradient(135deg, #c9a84c, #b08d3a);
+      --tab-active-color: #1e1608;
+      --results-bg: linear-gradient(180deg, #fdfbf7, #f5f0e6, #fdfbf7);
+      --title-gradient: linear-gradient(135deg, #b08d3a, #c9a84c, #dfc06a);
+      --method-bg: linear-gradient(180deg, #f5f0e6, #efe8d8, #f5f0e6);
+      --footer-bg: linear-gradient(180deg, #1e1608, #140e04);
+      --video-grid-bg: linear-gradient(135deg, #e0d6c4, #d8ccb4);
+      --prompt-bg: linear-gradient(180deg, #faf6ee, #f5efe2);
+      --particle-hue-base: 30;
+      --particle-hue-range: 15;
+    }
+
+    [data-theme="classic"] {
+      --primary: #1a1f36;
+      --primary-light: #2d3555;
+      --accent: #c9a84c;
+      --accent-dark: #b08d3a;
+      --accent-light: #dfc06a;
+      --accent-glow: rgba(201,168,76,0.3);
+      --teal: #6366f1;
+      --emerald: #8b5cf6;
+      --lime: #a78bfa;
+      --bg-white: #FFFFFF;
+      --bg-light: #f8f7f4;
+      --bg-dark: #0f1225;
+      --bg-card: rgba(255,255,255,0.94);
+      --text-dark: #1a1f36;
+      --text-medium: #3d4260;
+      --text-light: #7a7f9a;
+      --border: #e2e0d8;
+      --border-glow: rgba(201,168,76,0.2);
+      --shadow-sm: 0 2px 8px rgba(26,31,54,0.06);
+      --shadow-md: 0 4px 20px rgba(26,31,54,0.1);
+      --shadow-lg: 0 8px 40px rgba(26,31,54,0.15);
+      --shadow-glow: 0 0 30px rgba(201,168,76,0.12);
+      --hero-bg: linear-gradient(160deg, #f5f3ee 0%, #f8f7f4 30%, #faf9f6 60%, #f4f0e8 100%);
+      --hero-title-color: #1a1f36;
+      --hero-sub-color: #3d4260;
+      --hero-scroll-color: #7a7f9a;
+      --hero-blob1: rgba(201,168,76,0.1);
+      --hero-blob2: rgba(99,102,241,0.08);
+      --nav-bg: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,247,244,0.95));
+      --nav-border: rgba(201,168,76,0.15);
+      --nav-shadow: 0 2px 16px rgba(26,31,54,0.06);
+      --nav-link-color: #3d4260;
+      --nav-link-hover: #b08d3a;
+      --nav-sep: #e2e0d8;
+      --tab-bg: linear-gradient(135deg, #f8f7f4, #f5f3ee);
+      --tab-border: rgba(201,168,76,0.15);
+      --tab-color: #7a7f9a;
+      --tab-hover: #b08d3a;
+      --tab-active-bg: linear-gradient(135deg, #c9a84c, #8b5cf6);
+      --tab-active-color: white;
+      --results-bg: linear-gradient(180deg, #ffffff, #faf9f6, #ffffff);
+      --title-gradient: linear-gradient(135deg, #1a1f36, #b08d3a, #6366f1);
+      --method-bg: linear-gradient(180deg, #f8f7f4, #f5f3ee, #f8f7f4);
+      --footer-bg: linear-gradient(180deg, #0f1225, #0a0e1e);
+      --video-grid-bg: linear-gradient(135deg, #e8e4dc, #e2e0d8);
+      --prompt-bg: linear-gradient(180deg, #faf9f6, #f5f3ee);
+      --particle-hue-base: 35;
+      --particle-hue-range: 25;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Noto Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text-dark);
+      background: var(--bg-white);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== Animated background blobs ===== */
+    @keyframes blobFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -50px) scale(1.05); }
+      66% { transform: translate(-20px, 20px) scale(0.95); }
+    }
+    @keyframes blobFloat2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(-40px, 30px) scale(1.08); }
+      66% { transform: translate(25px, -40px) scale(0.92); }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(201,168,76,0.2); }
+      50% { box-shadow: 0 0 40px rgba(201,168,76,0.35); }
+    }
+
+    /* ===== Sections ===== */
+    .section-white { background: var(--bg-white); }
+    .section-gray { background: var(--bg-light); }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .container-narrow {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .section-title {
+      font-family: 'Noto Serif', serif;
+      font-size: 36px;
+      font-weight: 700;
+      text-align: center;
+      color: var(--primary);
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .section-title::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--teal));
+      border-radius: 2px;
+      margin: 12px auto 0;
+    }
+    .section-subtitle {
+      text-align: center;
+      color: var(--text-light);
+      font-size: 15px;
+      margin-bottom: 40px;
+    }
+
+    /* ===== Hero ===== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      background: var(--hero-bg);
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -150px;
+      right: -100px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, var(--hero-blob1) 0%, transparent 70%);
+      animation: blobFloat 8s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -100px;
+      left: -80px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, var(--hero-blob2) 0%, transparent 70%);
+      animation: blobFloat2 10s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .hero-title {
+      font-family: 'Noto Serif', serif;
+      font-size: 56px;
+      font-weight: 700;
+      color: var(--hero-title-color);
+      line-height: 1.15;
+      margin-bottom: 24px;
+      max-width: 960px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-title .accent {
+      background: linear-gradient(135deg, var(--accent), var(--teal), var(--emerald));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-subtitle {
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--hero-sub-color);
+      max-width: 780px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+      letter-spacing: 0.3px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== Scroll down indicator ===== */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      opacity: 0.6;
+      transition: opacity 0.3s;
+    }
+    .scroll-indicator:hover {
+      opacity: 1;
+    }
+    .scroll-indicator span {
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--hero-scroll-color);
+      font-weight: 500;
+    }
+    .scroll-indicator i {
+      font-size: 18px;
+      color: var(--accent);
+      animation: bounceDown 2s ease-in-out infinite;
+    }
+    @keyframes bounceDown {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(8px); }
+    }
+
+    /* ===== Teaser ===== */
+    .teaser-section {
+      padding: 70px 0 80px;
+      background: linear-gradient(180deg, var(--bg-light) 0%, #f0ede4 50%, var(--bg-light) 100%);
+      position: relative;
+    }
+    .teaser-section::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+    .teaser-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .teaser-item {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #000;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s ease;
+    }
+    .teaser-item:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+    .teaser-item:last-child {
+      box-shadow: 0 4px 20px rgba(201,168,76,0.2);
+    }
+    .teaser-item:last-child:hover {
+      box-shadow: 0 8px 40px rgba(201,168,76,0.3);
+    }
+    .teaser-item video {
+      width: 100%;
+      display: block;
+      border-radius: var(--radius);
+    }
+    .teaser-label {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 10px 16px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.75));
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .teaser-item:last-child .teaser-label {
+      background: linear-gradient(transparent, rgba(26,31,54,0.85));
+    }
+    .teaser-caption {
+      text-align: center;
+      color: var(--text-light);
+      font-size: 14px;
+      margin-top: 16px;
+      font-style: italic;
+    }
+
+    /* ===== Abstract ===== */
+    .abstract-section {
+      padding: 80px 0;
+      position: relative;
+    }
+    .abstract-section::before {
+      content: '';
+      position: absolute;
+      top: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(201,168,76,0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .abstract-text {
+      font-size: 16px;
+      line-height: 1.85;
+      color: var(--text-medium);
+      text-align: justify;
+      max-width: 760px;
+      margin: 0 auto;
+      position: relative;
+      padding: 40px 40px 32px;
+      background: linear-gradient(135deg, rgba(248,247,244,0.5), rgba(255,255,255,0.5));
+      border-radius: var(--radius);
+      border-left: 4px solid;
+      border-image: linear-gradient(180deg, var(--accent), var(--teal)) 1;
+    }
+    .abstract-text::before {
+      content: '\201C';
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      font-size: 64px;
+      font-family: 'Noto Serif', serif;
+      color: var(--accent);
+      opacity: 0.15;
+      line-height: 1;
+    }
+
+    /* ===== Method ===== */
+    .method-section {
+      padding: 80px 0;
+      background: var(--method-bg);
+      position: relative;
+      overflow: hidden;
+    }
+    .method-section::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%);
+      animation: blobFloat 12s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .method-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+    .method-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(10px);
+      border-radius: var(--radius);
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.4s cubic-bezier(0.4,0,0.2,1), border-color 0.4s cubic-bezier(0.4,0,0.2,1);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .method-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--teal));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .method-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-lg), var(--shadow-glow);
+      border-color: var(--border-glow);
+    }
+    .method-card:hover::before {
+      opacity: 1;
+    }
+    .method-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 26px;
+    }
+    .method-icon-1 { background: linear-gradient(135deg, #fef3c7, #fde68a); color: var(--accent-dark); }
+    .method-icon-2 { background: linear-gradient(135deg, #e0e7ff, #c7d2fe); color: var(--teal); }
+    .method-icon-3 { background: linear-gradient(135deg, #ede9fe, #ddd6fe); color: #7c3aed; }
+    .method-card h3 {
+      font-family: 'Noto Serif', serif;
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--primary);
+    }
+    .method-card p {
+      font-size: 14px;
+      color: var(--text-light);
+      line-height: 1.65;
+    }
+
+    .arch-placeholder {
+      margin-top: 48px;
+      background: var(--bg-card);
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 60px 24px;
+      text-align: center;
+      color: var(--text-light);
+      font-size: 15px;
+    }
+    .arch-placeholder i { font-size: 36px; margin-bottom: 16px; display: block; color: var(--accent); opacity: 0.4; }
+
+    /* ===== Results Gallery ===== */
+    .results-section {
+      padding: 100px 0;
+      position: relative;
+      overflow: hidden;
+      background: var(--results-bg);
+    }
+    .results-section::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      left: -200px;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 60%);
+      animation: blobFloat 15s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .results-section::after {
+      content: '';
+      position: absolute;
+      bottom: -200px;
+      right: -200px;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 60%);
+      animation: blobFloat2 18s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .results-header {
+      text-align: center;
+      margin-bottom: 48px;
+      position: relative;
+      z-index: 1;
+    }
+    .results-header .section-title {
+      font-size: 42px;
+      background: var(--title-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
+    .results-header .section-title::after {
+      display: none;
+    }
+    .results-counter {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 30px;
+      padding: 8px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent-dark);
+      margin-top: 12px;
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+    .results-counter i { font-size: 14px; }
+
+    /* Filter tabs */
+    .filter-tabs {
+      display: inline-flex;
+      justify-content: center;
+      gap: 4px;
+      margin-bottom: 44px;
+      background: var(--tab-bg);
+      border-radius: 30px;
+      padding: 5px;
+      position: relative;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 1px solid var(--tab-border);
+      box-shadow: 0 2px 10px rgba(42,32,16,0.12);
+    }
+    .filter-tab {
+      padding: 10px 26px;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: var(--tab-color);
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    .filter-tab:hover {
+      color: var(--tab-hover);
+      background: rgba(201,168,76,0.15);
+    }
+    .filter-tab.active {
+      background: var(--tab-active-bg);
+      color: var(--tab-active-color);
+      box-shadow: 0 4px 15px rgba(201,168,76,0.35);
+    }
+
+    /* Results carousel - paginated */
+    .carousel-wrapper {
+      position: relative;
+      z-index: 1;
+    }
+    .carousel-viewport {
+      overflow: hidden;
+      min-width: 0;
+    }
+    .carousel-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-dark);
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+    }
+    .carousel-prev { left: -64px; }
+    .carousel-next { right: -64px; }
+    .carousel-btn:hover {
+      background: linear-gradient(135deg, var(--accent), var(--emerald));
+      color: white;
+      border-color: var(--accent);
+      box-shadow: 0 4px 20px rgba(201,168,76,0.3);
+      transform: scale(1.08);
+    }
+    .carousel-btn:active { transform: scale(0.95); }
+    .carousel-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      transform: none !important;
+      background: var(--bg-card) !important;
+      color: var(--text-light) !important;
+      border-color: var(--border) !important;
+      box-shadow: none !important;
+    }
+    .carousel-bottom {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-top: 28px;
+      position: relative;
+      z-index: 1;
+    }
+    .carousel-page {
+      display: none;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .carousel-page.active {
+      display: flex;
+    }
+    .carousel-page.slide-in-right {
+      animation: slideInRight 0.45s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+    .carousel-page.slide-in-left {
+      animation: slideInLeft 0.45s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+    .carousel-page.slide-in-up {
+      animation: fadeInUp 0.45s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(60px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-60px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .carousel-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-dark);
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+    }
+    .carousel-btn:hover {
+      background: linear-gradient(135deg, var(--accent), var(--emerald));
+      color: white;
+      border-color: var(--accent);
+      box-shadow: 0 4px 20px rgba(201,168,76,0.3);
+      transform: scale(1.08);
+    }
+    .carousel-btn:active { transform: scale(0.95); }
+    .carousel-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      transform: none !important;
+      background: var(--bg-card) !important;
+      color: var(--text-light) !important;
+      border-color: var(--border) !important;
+      box-shadow: none !important;
+    }
+    .carousel-dots {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .carousel-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: none;
+      background: var(--border);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 0;
+    }
+    .carousel-dot.active {
+      width: 32px;
+      border-radius: 5px;
+      background: linear-gradient(90deg, var(--accent), var(--teal));
+      box-shadow: 0 0 10px rgba(201,168,76,0.3);
+    }
+    .carousel-dot:hover:not(.active) {
+      background: var(--accent-light);
+      transform: scale(1.2);
+    }
+    .carousel-footer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 16px;
+      position: relative;
+      z-index: 1;
+    }
+    .carousel-counter {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-medium);
+      font-variant-numeric: tabular-nums;
+    }
+    .carousel-counter span {
+      color: var(--accent-dark);
+    }
+    .carousel-hint {
+      font-size: 12px;
+      color: var(--text-light);
+      opacity: 0.7;
+    }
+
+    /* Sample card - glassmorphism */
+    .sample-card {
+      position: relative;
+      background: var(--bg-card);
+      backdrop-filter: blur(10px);
+      border-radius: 18px;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+      box-shadow: 0 2px 15px rgba(201,168,76,0.05);
+      border: 1px solid rgba(201,168,76,0.1);
+    }
+    .sample-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 18px;
+      padding: 2px;
+      background: linear-gradient(135deg, rgba(201,168,76,0.4), transparent 40%, transparent 60%, rgba(184,134,11,0.3));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .sample-card:hover {
+      box-shadow: 0 12px 40px rgba(201,168,76,0.15), var(--shadow-glow);
+      border-color: rgba(201,168,76,0.25);
+    }
+    .sample-card:hover::before {
+      opacity: 1;
+    }
+
+    .sample-card-header {
+      padding: 24px 28px 16px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .sample-index {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--emerald));
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+      box-shadow: 0 3px 12px rgba(201,168,76,0.3);
+    }
+    .sample-meta { flex: 1; }
+    .sample-asr {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+      line-height: 1.6;
+    }
+    .sample-audio-prompt {
+      display: block;
+      margin-top: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-light);
+    }
+    .tag-cat {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 12px;
+      border-radius: 8px;
+      margin-right: 8px;
+      letter-spacing: 0.8px;
+      white-space: nowrap;
+    }
+    .tag-single { background: linear-gradient(135deg, #fef3c7, #fcd34d); color: var(--accent-dark); border: 1px solid rgba(201,168,76,0.15); }
+    .tag-dual { background: linear-gradient(135deg, #e0e7ff, #c7d2fe); color: var(--teal); border: 1px solid rgba(99,102,241,0.15); }
+    .tag-object { background: linear-gradient(135deg, #ede9fe, #ddd6fe); color: #7c3aed; border: 1px solid rgba(124,58,237,0.15); }
+    .tag-add { background: linear-gradient(135deg, #d1fae5, #6ee7b7); color: #047857; border: 1px solid rgba(4,120,87,0.15); }
+    .tag-delete { background: linear-gradient(135deg, #fee2e2, #fca5a5); color: #dc2626; border: 1px solid rgba(220,38,38,0.15); }
+    .sample-prompt-toggle {
+      font-size: 12px;
+      color: var(--accent-dark);
+      cursor: pointer;
+      border: 1.5px solid rgba(201,168,76,0.25);
+      background: rgba(201,168,76,0.04);
+      font-weight: 600;
+      white-space: nowrap;
+      padding: 6px 14px;
+      border-radius: 10px;
+      transition: all 0.2s;
+    }
+    .sample-prompt-toggle:hover {
+      background: rgba(201,168,76,0.12);
+      border-color: var(--accent);
+      box-shadow: 0 2px 8px rgba(201,168,76,0.15);
+    }
+    .sample-prompt {
+      display: none;
+      padding: 16px 28px 20px;
+      font-size: 13px;
+      color: var(--text-light);
+      line-height: 1.7;
+      background: var(--prompt-bg);
+      border-top: 1px solid rgba(201,168,76,0.1);
+      margin: 0;
+    }
+    .sample-prompt.show { display: block; }
+
+    .results-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      position: relative;
+      z-index: 1;
+    }
+    .sample-card.hidden { display: none; }
+    .cat-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 36px 40px 24px;
+      margin-top: 32px;
+      position: relative;
+      z-index: 1;
+      background: var(--nav-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--nav-border);
+    }
+    .cat-header::after {
+      content: '';
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-light));
+      border-radius: 2px;
+      margin-top: 4px;
+    }
+    .cat-header:first-child { margin-top: 0; }
+    .cat-header-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      background: rgba(201,168,76,0.15);
+      color: var(--accent-light);
+      border: 1px solid rgba(201,168,76,0.2);
+    }
+    .cat-header-title {
+      font-family: 'Noto Serif', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--nav-link-color);
+    }
+    .cat-header-count {
+      font-size: 12px;
+      color: var(--text-light);
+      background: var(--bg-light);
+      padding: 2px 10px;
+      border-radius: 10px;
+    }
+    .cat-header.hidden { display: none; }
+    .cat-header { cursor: pointer; user-select: none; transition: opacity 0.2s; }
+    .cat-header:hover { opacity: 0.85; }
+    .cat-header-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-light);
+      opacity: 0.5;
+      padding: 4px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(201,168,76,0.15);
+      background: rgba(201,168,76,0.06);
+      transition: all 0.2s;
+    }
+    .cat-header:hover .cat-header-toggle { opacity: 0.8; }
+    .cat-header-toggle i { font-size: 10px; transition: transform 0.3s; }
+    .cat-header.collapsed .cat-header-toggle i { transform: rotate(-90deg); }
+    .results-empty {
+      display: none;
+      text-align: center;
+      padding: 60px 24px;
+      color: var(--text-light);
+      font-size: 15px;
+      position: relative;
+      z-index: 1;
+    }
+    .results-empty.show { display: block; }
+    .results-empty i {
+      font-size: 36px;
+      margin-bottom: 16px;
+      display: block;
+      opacity: 0.3;
+    }
+
+    .sample-videos {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 3px;
+      padding: 3px;
+      background: var(--video-grid-bg);
+      border-radius: 0 0 16px 16px;
+    }
+    .video-cell {
+      background: white;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .video-cell:first-child { border-radius: 0 0 0 14px; }
+    .video-cell:last-child { border-radius: 0 0 14px 0; }
+
+    .video-cell-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-light);
+      padding: 12px 8px 8px;
+      position: relative;
+    }
+    .video-cell:last-child .video-cell-label {
+      color: var(--accent-dark);
+      background: linear-gradient(180deg, rgba(201,168,76,0.08), transparent);
+    }
+    .video-cell:last-child .video-cell-label::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 15%;
+      right: 15%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      border-radius: 1px;
+    }
+
+    .video-cell video, .video-cell img {
+      width: 100%;
+      display: block;
+      object-fit: contain;
+      background: #1a1a1a;
+    }
+    .video-cell video {
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .video-cell video:hover {
+      filter: brightness(1.06);
+    }
+    .video-cell:last-child {
+      position: relative;
+    }
+    .video-cell:last-child::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 2px solid rgba(201,168,76,0.15);
+      border-radius: 0 0 14px 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .sample-card:hover .video-cell:last-child::after {
+      opacity: 1;
+    }
+
+    /* ===== Footer ===== */
+    .site-footer {
+      background: var(--footer-bg);
+      color: rgba(255,255,255,0.4);
+      padding: 56px 24px 40px;
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.8;
+      position: relative;
+    }
+    .site-footer::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+    .site-footer a {
+      color: rgba(201,168,76,0.6);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .site-footer a:hover { color: var(--accent); }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      .hero-title { font-size: 36px; }
+      .hero-subtitle { font-size: 17px; }
+      .teaser-grid { grid-template-columns: 1fr; }
+      .method-cards { grid-template-columns: 1fr; }
+      .sample-videos { grid-template-columns: repeat(2, 1fr); }
+      .hero { min-height: 100vh; padding: 60px 16px; }
+    }
+
+    /* ===== Animations ===== */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-in {
+      opacity: 0;
+      animation: fadeInUp 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+    .delay-1 { animation-delay: 0.15s; }
+    .delay-2 { animation-delay: 0.3s; }
+    .delay-3 { animation-delay: 0.45s; }
+    .delay-4 { animation-delay: 0.6s; }
+
+    /* ===== Scroll-to-top ===== */
+    .scroll-top {
+      position: fixed !important;
+      bottom: 40px;
+      right: 40px;
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--emerald));
+      color: white;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 4px 16px rgba(201,168,76,0.35);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+      transition: all 0.3s ease;
+      z-index: 9999;
+    }
+    .scroll-top.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .scroll-top:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(201,168,76,0.45);
+    }
+
+    /* ===== Decorative dividers ===== */
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.2), transparent);
+    }
+
+    /* ===== Particle Canvas ===== */
+    #particleCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+    body > *:not(#particleCanvas):not(#cursorGlow):not(#scrollTopBtn):not(#tocNav):not(#themeFloat) {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== Cursor Glow ===== */
+    #cursorGlow {
+      position: fixed;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.3s;
+    }
+
+    /* ===== Typewriter effect ===== */
+    .typewriter {
+      overflow: hidden;
+      border-right: 3px solid var(--accent);
+      white-space: nowrap;
+      display: inline-block;
+      animation: typing 3s steps(80) 0.5s 1 normal both, blinkCaret 0.75s step-end infinite;
+    }
+    @keyframes typing {
+      from { max-width: 0; }
+      to { max-width: 100%; }
+    }
+    @keyframes blinkCaret {
+      from, to { border-color: transparent; }
+      50% { border-color: var(--accent); }
+    }
+
+    /* ===== Scroll reveal ===== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-60px);
+      transition: all 0.8s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal-left.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(60px);
+      transition: all 0.8s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal-right.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.85);
+      transition: all 0.8s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal-scale.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* ===== 3D Tilt on method cards ===== */
+    .method-card {
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+    .method-card .method-icon {
+      transition: transform 0.4s ease;
+    }
+    .method-card:hover .method-icon {
+      transform: translateZ(20px) scale(1.1);
+    }
+
+    /* ===== Animated counter ===== */
+    @keyframes countUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== Glowing line animation ===== */
+    @keyframes glowLine {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .glow-line {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), var(--teal), var(--accent-light), transparent);
+      background-size: 200% 100%;
+      animation: glowLine 3s linear infinite;
+      margin: 0 auto;
+      max-width: 400px;
+      border-radius: 1px;
+    }
+
+    /* ===== Hero floating shapes ===== */
+    .hero-shapes {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .hero-shape {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.15;
+    }
+    .hero-shape:nth-child(1) {
+      width: 80px; height: 80px;
+      background: var(--accent);
+      top: 15%; left: 8%;
+      animation: floatShape1 6s ease-in-out infinite;
+    }
+    .hero-shape:nth-child(2) {
+      width: 50px; height: 50px;
+      background: var(--teal);
+      top: 60%; right: 10%;
+      animation: floatShape2 8s ease-in-out infinite;
+    }
+    .hero-shape:nth-child(3) {
+      width: 120px; height: 120px;
+      background: var(--emerald);
+      bottom: 10%; left: 20%;
+      animation: floatShape3 10s ease-in-out infinite;
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    }
+    .hero-shape:nth-child(4) {
+      width: 40px; height: 40px;
+      background: var(--lime);
+      top: 25%; right: 25%;
+      animation: floatShape1 7s ease-in-out infinite reverse;
+    }
+    .hero-shape:nth-child(5) {
+      width: 65px; height: 65px;
+      background: var(--accent-light);
+      bottom: 30%; right: 5%;
+      animation: floatShape2 9s ease-in-out infinite;
+      border-radius: 40% 60% 60% 40% / 40% 40% 60% 60%;
+    }
+    @keyframes floatShape1 {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      25% { transform: translate(20px, -30px) rotate(90deg); }
+      50% { transform: translate(-10px, -60px) rotate(180deg); }
+      75% { transform: translate(15px, -20px) rotate(270deg); }
+    }
+    @keyframes floatShape2 {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(-30px, 20px) rotate(120deg); }
+      66% { transform: translate(20px, -30px) rotate(240deg); }
+    }
+    @keyframes floatShape3 {
+      0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+      50% { transform: translate(30px, -20px) rotate(180deg) scale(1.1); }
+    }
+
+    /* ===== Ripple on filter tabs ===== */
+    .filter-tab {
+      overflow: hidden;
+      position: relative;
+    }
+    .filter-tab .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(201,168,76,0.3);
+      transform: scale(0);
+      animation: rippleEffect 0.6s linear;
+      pointer-events: none;
+    }
+    @keyframes rippleEffect {
+      to { transform: scale(4); opacity: 0; }
+    }
+
+    /* ===== Shimmer on SpongeBob text ===== */
+    .hero-title .accent {
+      background: linear-gradient(135deg, #fcd34d, #c9a84c, #daa520, #fcd34d, #c9a84c);
+      background-size: 300% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmerText 4s ease-in-out infinite;
+    }
+    @keyframes shimmerText {
+      0%, 100% { background-position: 0% center; }
+      50% { background-position: 100% center; }
+    }
+
+    /* ===== Section title glow on hover ===== */
+    .section-title {
+      transition: text-shadow 0.3s ease;
+    }
+    .section-title:hover {
+      text-shadow: 0 0 20px rgba(201,168,76,0.2);
+    }
+
+    /* ===== Progress bar at page top ===== */
+    #progressBar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--teal), var(--accent-light));
+      z-index: 9999;
+      transition: width 0.1s;
+      box-shadow: 0 0 10px rgba(201,168,76,0.5);
+    }
+
+    /* ===== Stagger children ===== */
+    .stagger-children > * {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s cubic-bezier(0.22,1,0.36,1);
+    }
+    .stagger-children.visible > *:nth-child(1) { transition-delay: 0s; opacity: 1; transform: translateY(0); }
+    .stagger-children.visible > *:nth-child(2) { transition-delay: 0.12s; opacity: 1; transform: translateY(0); }
+    .stagger-children.visible > *:nth-child(3) { transition-delay: 0.24s; opacity: 1; transform: translateY(0); }
+
+    /* ===== Sticky TOC Nav ===== */
+    .toc-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 9998;
+      background: var(--nav-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--nav-border);
+      box-shadow: var(--nav-shadow);
+      transform: translateY(-100%);
+      transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+      padding: 0 24px;
+    }
+    .toc-nav.visible { transform: translateY(0); }
+    .toc-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      height: 52px;
+      gap: 8px;
+    }
+    .toc-logo {
+      font-family: 'Noto Serif', serif;
+      font-size: 18px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-right: 24px;
+      flex-shrink: 0;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .toc-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .toc-link {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--nav-link-color);
+      text-decoration: none;
+      transition: all 0.2s;
+      white-space: nowrap;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+    .toc-link:hover {
+      color: var(--nav-link-hover);
+      background: rgba(201,168,76,0.15);
+    }
+    .toc-link.active {
+      color: var(--nav-link-hover);
+      background: rgba(201,168,76,0.2);
+      font-weight: 600;
+    }
+    .toc-sep {
+      width: 1px;
+      height: 20px;
+      background: var(--nav-sep);
+      margin: 0 8px;
+      flex-shrink: 0;
+    }
+
+    /* ===== Theme Switcher ===== */
+    .theme-switcher {
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 2px;
+      border: 1px solid rgba(201,168,76,0.15);
+      flex-shrink: 0;
+    }
+    .theme-switcher-nav { margin-left: auto; }
+    .theme-switcher-float {
+      position: fixed;
+      top: 16px;
+      right: 24px;
+      z-index: 10000;
+      background: rgba(42,32,16,0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(201,168,76,0.25);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+    .theme-switcher-float.hide { opacity: 0; visibility: hidden; }
+    .theme-opt {
+      padding: 4px 12px;
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      color: rgba(255,220,160,0.4);
+      transition: all 0.3s cubic-bezier(0.22,1,0.36,1);
+      cursor: pointer;
+      border: none;
+      background: none;
+      white-space: nowrap;
+    }
+    .theme-opt:hover { color: rgba(255,220,160,0.8); }
+    .theme-opt.active {
+      background: rgba(201,168,76,0.25);
+      color: #fcd34d;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- Dynamic elements -->
+<div id="progressBar" style="width:0%"></div>
+<canvas id="particleCanvas"></canvas>
+<div id="cursorGlow"></div>
+
+<!-- ===== Floating Theme Switcher (Hero) ===== -->
+<div class="theme-switcher theme-switcher-float" id="themeFloat">
+  <button class="theme-opt theme-opt-warm active" onclick="setTheme('warm')">☀ Warm</button>
+  <button class="theme-opt theme-opt-classic" onclick="setTheme('classic')">✦ Classic</button>
+</div>
+
+<!-- ===== Sticky TOC Nav ===== -->
+<nav class="toc-nav" id="tocNav">
+  <div class="toc-inner">
+    <a class="toc-logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">SpongeBob</a>
+    <div class="toc-links">
+      <a class="toc-link" href="#results">Results Gallery</a>
+      <div class="toc-sep"></div>
+      <button class="toc-link" data-cat="all" onclick="tocFilter('all')">All</button>
+      <button class="toc-link" data-cat="single" onclick="tocFilter('single')">Single</button>
+      <button class="toc-link" data-cat="dual" onclick="tocFilter('dual')">Dual</button>
+      <button class="toc-link" data-cat="object" onclick="tocFilter('object')">Object</button>
+      <button class="toc-link" data-cat="add" onclick="tocFilter('add')">Addition</button>
+      <button class="toc-link" data-cat="delete" onclick="tocFilter('delete')">Deletion</button>
+      <div class="toc-sep"></div>
+      <a class="toc-link" href="#comparison">Comparison</a>
+    </div>
+    <div class="theme-switcher theme-switcher-nav" id="themeSwitcher">
+      <button class="theme-opt theme-opt-warm active" onclick="setTheme('warm')">☀ Warm</button>
+      <button class="theme-opt theme-opt-classic" onclick="setTheme('classic')">✦ Classic</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== Hero ===== -->
+<section class="hero" id="hero">
+  <div class="hero-shapes">
+    <div class="hero-shape"></div>
+    <div class="hero-shape"></div>
+    <div class="hero-shape"></div>
+    <div class="hero-shape"></div>
+    <div class="hero-shape"></div>
+  </div>
+  <div class="container">
+    <h1 class="hero-title animate-in delay-1">
+      <span class="accent">SpongeBob</span>: Sync-Aware Harmonious Audio-Visual Generative Editing
+    </h1>
+    <p class="hero-subtitle animate-in delay-2">
+      The first framework for joint audio-visual editing within a unified dual-stream diffusion process
+    </p>
+    <div class="glow-line animate-in delay-3"></div>
+    <p class="animate-in delay-3" style="margin-top:28px; font-size:14px; font-weight:700; color:#ff4444; max-width:650px; margin-left:auto; margin-right:auto; line-height:1.7; position:relative; z-index:1; background:rgba(255,68,68,0.1); border:1.5px solid rgba(255,68,68,0.3); border-radius:10px; padding:12px 20px; text-align:justify;">
+      <i class="fas fa-exclamation-triangle" style="margin-right:6px;"></i>
+      <strong>Disclaimer:</strong> All portrait photographs, film clips, and audio recordings presented on this page are used exclusively for non-commercial academic research. They remain the intellectual property of their respective copyright holders. No content may be reproduced, redistributed, or used for any commercial, generative, or identity-related purpose.
+    </p>
+  </div>
+  <div class="scroll-indicator animate-in delay-4" onclick="document.getElementById('results').scrollIntoView({behavior:'smooth'})">
+    <span>Scroll</span>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+
+<!-- ===== Results Gallery ===== -->
+<div class="section-divider"></div>
+<section class="results-section section-white" id="results">
+  <div class="container">
+    <div class="results-header">
+      <div class="section-title">Results Gallery</div>
+      <p class="section-subtitle">Click play to compare source video with SpongeBob's joint audio-visual editing result</p>
+    </div>
+
+    <div class="filter-tabs" id="filterTabs">
+      <button class="filter-tab active" data-filter="all">All</button>
+      <button class="filter-tab" data-filter="single"><i class="fas fa-user"></i> Single</button>
+      <button class="filter-tab" data-filter="dual"><i class="fas fa-user-group"></i> Dual</button>
+      <button class="filter-tab" data-filter="object"><i class="fas fa-cube"></i> Object</button>
+      <button class="filter-tab" data-filter="add"><i class="fas fa-plus-circle"></i> Addition</button>
+      <button class="filter-tab" data-filter="delete"><i class="fas fa-minus-circle"></i> Deletion</button>
+    </div>
+
+    <div class="results-grid" id="resultsGrid">
+
+      <!-- ==================== object / 001 — Dog barking ==================== -->
+      <div class="sample-card" data-cat="object">
+        <div class="sample-card-header">
+          <span class="sample-index">001</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-object">Object</span>
+              <strong>Speech:</strong> ""
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Non-speech]. A dog barks loudly and repeatedly, its deep, resonant vocalizations echoing with energy and alertness.</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A Shiba Inu with orange-brown fur, upright ears, and a white chest barks energetically, its mouth opening wide with each vocalization.</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/object/001/001_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/object/001/001_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/object/001/001_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/object/001/001_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== object / 002 — Cat meowing ==================== -->
+      <div class="sample-card" data-cat="object">
+        <div class="sample-card-header">
+          <span class="sample-index">002</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-object">Object</span>
+              <strong>Speech:</strong> ""
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Non-speech]. A cat lets out a series of sharp, high-pitched meows, vocalizing with urgency and intensity.</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A fluffy light-colored cat with green eyes meows with urgency, its mouth opening and closing expressively as it vocalizes.</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/object/002/002_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/object/002/002_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/object/002/002_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/object/002/002_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== object / 003 — Pipa playing ==================== -->
+      <div class="sample-card" data-cat="object">
+        <div class="sample-card-header">
+          <span class="sample-index">003</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-object">Object</span>
+              <strong>Speech:</strong> ""
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Non-speech]. A traditional Chinese pipa is being plucked, producing bright, resonant tones with rapid tremolo and melodic flourishes.</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A wooden pear-shaped stringed instrument with ornate circular sound-hole decorations is being plucked, producing bright resonant tones with rapid melodic flourishes.</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/object/003/003_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/object/003/003_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/object/003/003_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/object/003/003_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== object / 004 — Cuckoo calling ==================== -->
+      <div class="sample-card" data-cat="object">
+        <div class="sample-card-header">
+          <span class="sample-index">004</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-object">Object</span>
+              <strong>Speech:</strong> ""
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Non-speech]. A cuckoo bird produces its distinctive two-note call, a melodic and repetitive sound echoing through the trees.</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A brown cuckoo-like bird with a pale throat and yellow beak perches calmly, occasionally turning its head and producing its distinctive two-note call.</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/object/004/004_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/object/004/004_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/object/004/004_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/object/004/004_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== object / 005 — Guitar strumming ==================== -->
+      <div class="sample-card" data-cat="object">
+        <div class="sample-card-header">
+          <span class="sample-index">005</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-object">Object</span>
+              <strong>Speech:</strong> ""
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Non-speech]. An acoustic guitar is being strummed and plucked, producing warm, resonant chords and melodic phrases.</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> An acoustic guitar with a glossy sunburst body and dark fretboard is being strummed, producing warm resonant chords and melodic phrases.</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/object/005/005_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/object/005/005_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/object/005/005_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/object/005/005_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== object / 006 — Guitar playing (cosplay) ==================== -->
+      <div class="sample-card" data-cat="object">
+        <div class="sample-card-header">
+          <span class="sample-index">006</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-object">Object</span>
+              <strong>Speech:</strong> ""
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Non-speech]. An acoustic guitar is being strummed and plucked, producing warm, resonant chords and melodic phrases.</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A front-facing acoustic guitar with a natural wood body and black pickguard is being plucked, its strings vibrating as warm tones fill the air.</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/object/006/006_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/object/006/006_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/object/006/006_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/object/006/006_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== object / 007 — Cat meowing ==================== -->
+      <div class="sample-card" data-cat="object">
+        <div class="sample-card-header">
+          <span class="sample-index">007</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-object">Object</span>
+              <strong>Speech:</strong> ""
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Non-speech]. A cat lets out a series of sharp, high-pitched meows, vocalizing with urgency and intensity.</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A brown tabby cat with green eyes and upright ears meows expressively, its mouth opening wide to reveal its teeth and pink tongue.</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/object/007/007_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/object/007/007_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/object/007/007_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/object/007/007_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+
+      <!-- ==================== object / 009 — Goose honking ==================== -->
+      <div class="sample-card" data-cat="object">
+        <div class="sample-card-header">
+          <span class="sample-index">009</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-object">Object</span>
+              <strong>Speech:</strong> ""
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Non-speech]. A goose honks loudly with a deep, resonant call, its rhythmic vocalizations carrying across the open air.</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A white goose with an orange beak and long neck honks loudly, its beak opening wide with each deep resonant call.</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/object/009/009_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/object/009/009_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/object/009/009_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/object/009/009_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== object / 010 — Cow mooing ==================== -->
+      <div class="sample-card" data-cat="object">
+        <div class="sample-card-header">
+          <span class="sample-index">010</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-object">Object</span>
+              <strong>Speech:</strong> ""
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Non-speech]. A cow lets out a deep, prolonged moo, its low-pitched vocalization resonating with a warm, rumbling quality.</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A black-and-white dairy cow with irregular patches and a white face lets out a deep prolonged moo, its mouth slightly open.</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/object/010/010_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/object/010/010_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/object/010/010_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/object/010/010_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== object / 011 — Crow cawing ==================== -->
+      <div class="sample-card" data-cat="object">
+        <div class="sample-card-header">
+          <span class="sample-index">011</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-object">Object</span>
+              <strong>Speech:</strong> ""
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Non-speech]. A crow caws loudly with a harsh, raspy call, its sharp vocalizations punctuating the air in rapid succession.</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A black-and-gray crow with a dark head and gray body feathers caws loudly, its beak opening sharply with each harsh raspy call.</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/object/011/011_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/object/011/011_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/object/011/011_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/object/011/011_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== object / 012 — Frog croaking ==================== -->
+      <div class="sample-card" data-cat="object">
+        <div class="sample-card-header">
+          <span class="sample-index">012</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-object">Object</span>
+              <strong>Speech:</strong> ""
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Non-speech]. A frog croaks with a deep, guttural sound, its vocal sacs inflating as it produces rhythmic, resonant calls.</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A yellow-brown frog with dark eyes and speckled skin croaks deeply, its body pulsing rhythmically as it produces guttural calls.</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/object/012/012_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/object/012/012_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/object/012/012_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/object/012/012_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== dual / 001 ==================== -->
+      <div class="sample-card" data-cat="dual">
+        <div class="sample-card-header">
+          <span class="sample-index">001</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-dual">Dual</span>
+              <strong>Speech:</strong> "His daddy's name is Forrest, too?"
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> In a poignant close-up, a man with receding brown hair, fair skin, blue eyes, wearing a light suit jacket over a patterned blue shirt, stares intently with a serious and questioning expression. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/dual/001/001_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/dual/001/001_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/dual/001/001_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/dual/001/001_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== dual / 002 ==================== -->
+      <div class="sample-card" data-cat="dual">
+        <div class="sample-card-header">
+          <span class="sample-index">002</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-dual">Dual</span>
+              <strong>Speech:</strong> "Well now you close an eye for us."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A man with medium-length dark hair with lighter highlights, glasses, a goatee, wearing a casual jacket, speaks with a calm and deliberate tone. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/dual/002/002_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/dual/002/002_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/dual/002/002_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/dual/002/002_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== dual / 003 ==================== -->
+      <div class="sample-card" data-cat="dual">
+        <div class="sample-card-header">
+          <span class="sample-index">003</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-dual">Dual</span>
+              <strong>Speech:</strong> "Hello. Yeah, it's my island."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A man with receding light-brown hair, fair skin, and a lean angular face, wearing a dark suit, speaks earnestly with subtle facial movements. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/dual/003/003_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/dual/003/003_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/dual/003/003_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/dual/003/003_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== dual / 004 ==================== -->
+      <div class="sample-card" data-cat="dual">
+        <div class="sample-card-header">
+          <span class="sample-index">004</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-dual">Dual</span>
+              <strong>Speech:</strong> "You've been to room."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A woman with shoulder-length blonde highlighted hair, fair skin, blue eyes, and dangling earrings speaks thoughtfully, her expression shifting between contemplation and engagement. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/dual/004/004_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/dual/004/004_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/dual/004/004_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/dual/004/004_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== dual / 005 ==================== -->
+      <div class="sample-card" data-cat="dual">
+        <div class="sample-card-header">
+          <span class="sample-index">005</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-dual">Dual</span>
+              <strong>Speech:</strong> "Named after a French swimming pool on a Japanese ship full of animals heading to Canada. Call me back."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A man with short dark brown hair, fair skin, blue eyes, and angular features speaks animatedly with expressive gestures and a broad smile. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/dual/005/005_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/dual/005/005_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/dual/005/005_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/dual/005/005_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== dual / 006 ==================== -->
+      <div class="sample-card" data-cat="dual">
+        <div class="sample-card-header">
+          <span class="sample-index">006</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-dual">Dual</span>
+              <strong>Speech:</strong> "I don't want to leave."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A man with short brown hair, fair skin, blue eyes, and a square jaw, wearing a teal shirt and dark vest, speaks with conviction. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/dual/006/006_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/dual/006/006_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/dual/006/006_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/dual/006/006_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== dual / 008 ==================== -->
+      <div class="sample-card" data-cat="dual">
+        <div class="sample-card-header">
+          <span class="sample-index">008</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-dual">Dual</span>
+              <strong>Speech:</strong> "You're going to teach me to read."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A woman with long straight strawberry-blonde hair, very fair skin, light eyes, and elegant features speaks gently, her expression warm and attentive. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/dual/008/008_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/dual/008/008_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/dual/008/008_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/dual/008/008_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== dual / 009 ==================== -->
+      <div class="sample-card" data-cat="dual">
+        <div class="sample-card-header">
+          <span class="sample-index">009</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-dual">Dual</span>
+              <strong>Speech:</strong> "You cannot follow three different religions at the same time, Piscine."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A man with short curly brown hair, fair skin, blue-green eyes, light stubble, wearing a black leather jacket over a white henley, speaks while eating. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/dual/009/009_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/dual/009/009_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/dual/009/009_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/dual/009/009_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== dual / 010 ==================== -->
+      <div class="sample-card" data-cat="dual">
+        <div class="sample-card-header">
+          <span class="sample-index">010</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-dual">Dual</span>
+              <strong>Speech:</strong> "What do you mean."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A man with short dark hair, fair skin, light stubble, wearing a dark olive T-shirt, speaks while eating. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/dual/010/010_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/dual/010/010_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/dual/010/010_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/dual/010/010_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== dual / 011 ==================== -->
+      <div class="sample-card" data-cat="dual">
+        <div class="sample-card-header">
+          <span class="sample-index">011</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-dual">Dual</span>
+              <strong>Speech:</strong> "You've been to room."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A young woman with straight brown hair, fair skin, light eyes, full lips, wearing a turquoise top, speaks softly with a thoughtful expression. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/dual/011/011_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/dual/011/011_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/dual/011/011_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/dual/011/011_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== add / 002 ==================== -->
+      <div class="sample-card" data-cat="add">
+        <div class="sample-card-header">
+          <span class="sample-index">002</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-add">Addition</span>
+              <strong>Speech:</strong> "Here's looking at you, kid."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A bearded man with dark swept-back hair, fair skin, green eyes, and a dark shirt speaks directly to the camera in front of a light blue six-panel door with a brass knocker. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/add/002/002_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/add/002/002_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/add/002/002_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/add/002/002_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== add / 003 ==================== -->
+      <div class="sample-card" data-cat="add">
+        <div class="sample-card-header">
+          <span class="sample-index">003</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-add">Addition</span>
+              <strong>Speech:</strong> "Life is like a box of chocolates."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A man with black hair, medium skin tone, light stubble, wearing a burgundy blazer over a gray shirt, speaks directly to the camera as a dark suburban night scene is visible through a window behind him. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/add/003/003_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/add/003/003_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/add/003/003_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/add/003/003_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== add / 004 ==================== -->
+      <div class="sample-card" data-cat="add">
+        <div class="sample-card-header">
+          <span class="sample-index">004</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-add">Addition</span>
+              <strong>Speech:</strong> "You talking to me?"
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A middle-aged man with short brown hair, fair skin, light facial hair, glasses, and a dark jacket speaks directly to the camera on a quiet suburban street with colorful houses. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/add/004/004_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/add/004/004_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/add/004/004_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/add/004/004_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+
+      <!-- ==================== add / 006 ==================== -->
+      <div class="sample-card" data-cat="add">
+        <div class="sample-card-header">
+          <span class="sample-index">006</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-add">Addition</span>
+              <strong>Speech:</strong> "Life is like a box of chocolates."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div>
+          </div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A woman with red hair, fair skin, green eyes, and a dark blue outfit speaks directly to the camera in an interior hallway with floral wallpaper in pastel green and pink tones. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/add/006/006_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/add/006/006_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/add/006/006_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/add/006/006_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== delete / 001 — German Shepherd barking ==================== -->
+      <div class="sample-card" data-cat="delete">
+        <div class="sample-card-header">
+          <span class="sample-index">001</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-delete">Deletion</span>
+              "Long-haired German Shepherd barking on grass"
+            </div>
+          </div>
+        </div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/delete/001/001_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/delete/001/001_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/delete/001/001_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/delete/001/001_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+
+      <!-- ==================== delete / 003 — Warbler singing ==================== -->
+      <div class="sample-card" data-cat="delete">
+        <div class="sample-card-header">
+          <span class="sample-index">003</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-delete">Deletion</span>
+              "Yellow and black warbler singing on branch"
+            </div>
+          </div>
+        </div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/delete/003/003_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/delete/003/003_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/delete/003/003_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/delete/003/003_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== delete / 004 — Ambulance siren ==================== -->
+      <div class="sample-card" data-cat="delete">
+        <div class="sample-card-header">
+          <span class="sample-index">004</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-delete">Deletion</span>
+              "White ambulance with siren wailing"
+            </div>
+          </div>
+        </div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/delete/004/004_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/delete/004/004_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/delete/004/004_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/delete/004/004_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== delete / 005 — Airplane crashing ==================== -->
+      <div class="sample-card" data-cat="delete">
+        <div class="sample-card-header">
+          <span class="sample-index">005</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-delete">Deletion</span>
+              "Silver airplane making loud crashing sounds"
+            </div>
+          </div>
+        </div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/delete/005/005_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/delete/005/005_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/delete/005/005_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/delete/005/005_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== delete / 006 — Hound dog howling ==================== -->
+      <div class="sample-card" data-cat="delete">
+        <div class="sample-card-header">
+          <span class="sample-index">006</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-delete">Deletion</span>
+              "Reddish-brown hound dog howling and stretching"
+            </div>
+          </div>
+        </div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/delete/006/006_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/delete/006/006_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/delete/006/006_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/delete/006/006_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== delete / 007 — Sports car roaring ==================== -->
+      <div class="sample-card" data-cat="delete">
+        <div class="sample-card-header">
+          <span class="sample-index">007</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-delete">Deletion</span>
+              "Gray sports car engine roaring on track"
+            </div>
+          </div>
+        </div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/delete/007/007_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/delete/007/007_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/delete/007/007_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/delete/007/007_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== delete / 008 — Military helicopter ==================== -->
+      <div class="sample-card" data-cat="delete">
+        <div class="sample-card-header">
+          <span class="sample-index">008</span>
+          <div class="sample-meta">
+            <div class="sample-asr">
+              <span class="tag-cat tag-delete">Deletion</span>
+              "Camouflage military helicopter flying across the sky"
+            </div>
+          </div>
+        </div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/delete/008/008_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/delete/008/008_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/delete/008/008_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/delete/008/008_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+            <!-- ==================== single / 001 ==================== -->
+      <div class="sample-card" data-cat="single">
+        <div class="sample-card-header">
+          <span class="sample-index">001</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span>
+              <strong>Speech:</strong> "Just you watch and see. Mama can haiku, too."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div></div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A woman with long brown hair, fair skin, brown eyes, wearing a teal sweater and a silver watch, speaks with a serious expression, gesturing with her right hand. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/single/001/001_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/single/001/001_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/single/001/001_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/single/001/001_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== single / 002 ==================== -->
+      <div class="sample-card" data-cat="single">
+        <div class="sample-card-header">
+          <span class="sample-index">002</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span>
+              <strong>Speech:</strong> "I searched every inch of every room in her house and guess what wasn't there."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div></div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A woman with light brown hair, fair skin, blue eyes, wearing a black strapless dress, speaks earnestly with highly animated expressions, shifting between passionate gestures and pensive looks. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/single/002/002_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/single/002/002_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/single/002/002_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/single/002/002_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== single / 003 ==================== -->
+      <div class="sample-card" data-cat="single">
+        <div class="sample-card-header">
+          <span class="sample-index">003</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span>
+              <strong>Speech:</strong> "Is this about that baked ziti I ordered last week?"
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div></div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A bald middle-aged man with fair skin, light stubble, wearing a light blue dress shirt and a dark patterned tie, stands before a mirror in an elegantly decorated room. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/single/003/003_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/single/003/003_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/single/003/003_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/single/003/003_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== single / 004 ==================== -->
+      <div class="sample-card" data-cat="single">
+        <div class="sample-card-header">
+          <span class="sample-index">004</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span>
+              <strong>Speech:</strong> "What's everyone uh psyched for this summer?"
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div></div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A young man with short spiky hair, fair skin, blue eyes, a trimmed beard, wearing an orange hoodie over a gray shirt, looks up and offers a slight knowing smile. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/single/004/004_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/single/004/004_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/single/004/004_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/single/004/004_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== single / 005 ==================== -->
+      <div class="sample-card" data-cat="single">
+        <div class="sample-card-header">
+          <span class="sample-index">005</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span>
+              <strong>Speech:</strong> "And dear old dad strikes again."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div></div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A middle-aged man with short brown hair, a receding hairline, fair skin, wearing a gray suit and tie, raises his right hand with a knowing smirk. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/single/005/005_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/single/005/005_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/single/005/005_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/single/005/005_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== single / 007 ==================== -->
+      <div class="sample-card" data-cat="single">
+        <div class="sample-card-header">
+          <span class="sample-index">007</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span>
+              <strong>Speech:</strong> "Life is like a box of chocolates, you never know what you're gonna get."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div></div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A woman with long wavy reddish-brown hair, fair skin, brown eyes, wearing a vibrant lime green jacket and patterned scarf, speaks passionately in a heated argument in a modern wood-paneled room. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/single/007/007_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/single/007/007_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/single/007/007_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/single/007/007_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== single / 008 ==================== -->
+      <div class="sample-card" data-cat="single">
+        <div class="sample-card-header">
+          <span class="sample-index">008</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span>
+              <strong>Speech:</strong> "Now that that shit you pulled in town nearly got us all killed."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div></div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> In a sun-dappled outdoor setting, a man with a beard, wearing a large black wide-brimmed hat and a blue chambray shirt over a dark vest, speaks deeply engaged in conversation. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/single/008/008_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/single/008/008_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/single/008/008_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/single/008/008_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== single / 009 ==================== -->
+      <div class="sample-card" data-cat="single">
+        <div class="sample-card-header">
+          <span class="sample-index">009</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span>
+              <strong>Speech:</strong> "Intelligence agency is just putting out fires every bloody day."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div></div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A woman with short wavy blonde hair, fair skin, green eyes, defined cheekbones, wearing a purple coat, speaks with a serious expression. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/single/009/009_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/single/009/009_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/single/009/009_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/single/009/009_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== single / 010 ==================== -->
+      <div class="sample-card" data-cat="single">
+        <div class="sample-card-header">
+          <span class="sample-index">010</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span>
+              <strong>Speech:</strong> "Okay. Okay, do it fast."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div></div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A man with a shaved head, short beard, wearing a dark hoodie and plaid shirt, stands indoors in a brightly lit room with a concerned and slightly frustrated expression. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/single/010/010_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/single/010/010_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/single/010/010_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/single/010/010_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== single / 011 ==================== -->
+      <div class="sample-card" data-cat="single">
+        <div class="sample-card-header">
+          <span class="sample-index">011</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span>
+              <strong>Speech:</strong> "You should get ready. It's almost two."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div></div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> An elderly man with short white hair, fair skin, glasses, wearing a dark jacket, sits with a serious and contemplative expression in a dimly lit wood-paneled room. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/single/011/011_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/single/011/011_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/single/011/011_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/single/011/011_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== single / 012 ==================== -->
+      <div class="sample-card" data-cat="single">
+        <div class="sample-card-header">
+          <span class="sample-index">012</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span>
+              <strong>Speech:</strong> "No. But I had a really good teacher."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div></div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A man with short brown hair, fair skin, light stubble, wearing a dark leather jacket and white shirt, shifts from focused concern to a subtle confident smile. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/single/012/012_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/single/012/012_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/single/012/012_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/single/012/012_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+
+
+      <!-- ==================== single / 015 ==================== -->
+      <div class="sample-card" data-cat="single">
+        <div class="sample-card-header">
+          <span class="sample-index">015</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span>
+              <strong>Speech:</strong> "I just assume that one's with the authority and this one with us."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div></div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A middle-aged man with tousled dark hair, fair skin, sunglasses, a trimmed goatee, wearing a dark suit, turns from a pensive look to gaze directly at the camera. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/single/015/015_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/single/015/015_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/single/015/015_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/single/015/015_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== single / 016 ==================== -->
+      <div class="sample-card" data-cat="single">
+        <div class="sample-card-header">
+          <span class="sample-index">016</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span>
+              <strong>Speech:</strong> "I'm going to get my money and let it go."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div></div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> An older bald man with fair skin, blue eyes, wearing a black shirt, speaks with a somber expression in a tense indoor setting. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/single/016/016_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/single/016/016_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/single/016/016_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/single/016/016_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+
+
+
+      <!-- ==================== single / 020 ==================== -->
+      <div class="sample-card" data-cat="single">
+        <div class="sample-card-header">
+          <span class="sample-index">020</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span>
+              <strong>Speech:</strong> "They can't give it away. You booked it. You gave it a check."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div></div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A blonde woman with a loose updo, fair skin, blue eyes, wearing a pale sleeveless top, speaks with an animated and concerned expression, her hands clasped near her face. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/single/020/020_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/single/020/020_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/single/020/020_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/single/020/020_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+
+      <!-- ==================== single / 022 ==================== -->
+      <div class="sample-card" data-cat="single">
+        <div class="sample-card-header">
+          <span class="sample-index">022</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span>
+              <strong>Speech:</strong> "I'll give you your privacy."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div></div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A woman with light brown hair, fair skin, brown eyes, speaks naturally. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/single/022/022_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/single/022/022_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/single/022/022_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/single/022/022_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== single / 023 ==================== -->
+      <div class="sample-card" data-cat="single">
+        <div class="sample-card-header">
+          <span class="sample-index">023</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span>
+              <strong>Speech:</strong> "Here's looking at you, kid."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div></div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> An East Asian man with medium-length black hair and a warm skin tone, wearing a black leather jacket, briefly closes his eyes with a somber expression in a suburban neighborhood. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/single/023/023_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/single/023/023_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/single/023/023_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/single/023/023_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== single / 024 ==================== -->
+      <div class="sample-card" data-cat="single">
+        <div class="sample-card-header">
+          <span class="sample-index">024</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span>
+              <strong>Speech:</strong> ""
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div></div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A man with curly dark hair, fair skin, a full beard, wearing a dark heavy coat, speaks with quiet intensity in a wood-paneled room with warm high-contrast lighting. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/single/024/024_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/single/024/024_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/single/024/024_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/single/024/024_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== single / 025 ==================== -->
+      <div class="sample-card" data-cat="single">
+        <div class="sample-card-header">
+          <span class="sample-index">025</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span>
+              <strong>Speech:</strong> "London, what your life would be like going forward."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div></div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A man with short brown hair, fair skin, blue eyes, light stubble, wearing a light gray T-shirt, speaks with a furrowed brow in a measured manner. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/single/025/025_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/single/025/025_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/single/025/025_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/single/025/025_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== single / 026 ==================== -->
+      <div class="sample-card" data-cat="single">
+        <div class="sample-card-header">
+          <span class="sample-index">026</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span>
+              <strong>Speech:</strong> "Out of a racket doing it, which is great."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div></div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A man with dark hair, fair skin, a reddish-brown beard, wearing a navy suit and white shirt, speaks earnestly with focused determination. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/single/026/026_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/single/026/026_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/single/026/026_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/single/026/026_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== single / 027 ==================== -->
+      <div class="sample-card" data-cat="single">
+        <div class="sample-card-header">
+          <span class="sample-index">027</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span>
+              <strong>Speech:</strong> "Now we go through every last pixel."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div></div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A man with shaggy brown hair, fair skin, brown eyes, wearing a gray short-sleeved button-down shirt, stands in a modern kitchen with a concerned expression. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/single/027/027_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/single/027/027_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/single/027/027_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/single/027/027_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== single / 029 (bbox) ==================== -->
+      <div class="sample-card" data-cat="single">
+        <div class="sample-card-header">
+          <span class="sample-index">029</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span>
+              <strong>Speech:</strong> "What about this one?"
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div></div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> A man with short brown hair, fair skin, light stubble, wearing a brown leather jacket and black shirt, shifts from a soft smile to a wide charming grin. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/single/029/029_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/single/029/029_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/single/029/029_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/single/029/029_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ==================== single / 032 (bbox) ==================== -->
+      <div class="sample-card" data-cat="single">
+        <div class="sample-card-header">
+          <span class="sample-index">032</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span>
+              <strong>Speech:</strong> "Sorry. I honestly thought you were worse."
+              <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span>
+            </div></div>
+          <button class="sample-prompt-toggle" onclick="togglePrompt(this)"><i class="fas fa-eye"></i> Prompt</button>
+        </div>
+        <div class="sample-prompt"><strong>🎬 Visual prompt:</strong> An older man with gray curly hair, fair skin, a gray mustache, wearing a light teal blazer and dark shirt, speaks with a serious expression that gradually softens. <strong>🎧 Audio prompt:</strong> [Speech]. A person is speaking</div>
+        <div class="sample-videos">
+          <div class="video-cell"><div class="video-cell-label">Reference</div><img data-src="results/single/032/032_ref.png" alt="ref" loading="lazy"></div>
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="results/single/032/032_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">Masked</div><video preload="none" muted playsinline controls><source data-src="results/single/032/032_mask.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="results/single/032/032_gen.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="results-empty" id="resultsEmpty">
+      <i class="fas fa-film"></i>
+      <p>No samples in this category</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Method Comparison ===== -->
+<div class="section-divider"></div>
+<section class="results-section" id="comparison" style="background: var(--method-bg);">
+  <div class="container">
+    <div class="results-header">
+      <div class="section-title">Method Comparison</div>
+      <p class="section-subtitle">Qualitative comparison with existing methods — click play to listen</p>
+    </div>
+
+    <div class="results-grid" id="comparisonGrid">
+
+      <!-- ===== Comparison 2: Object — cat meow ===== -->
+      <div class="sample-card">
+        <div class="sample-card-header">
+          <span class="sample-index">02</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-object">Object</span> "A cat lets out a series of sharp, high-pitched meows."</div></div>
+        </div>
+        <div class="sample-videos" style="grid-template-columns: repeat(6, 1fr);">
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="ACompare/Source/02_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">AvED</div><video preload="none" playsinline controls><source data-src="ACompare/AvED/02.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">CoherentAVEdit</div><video preload="none" playsinline controls><source data-src="ACompare/CoherentAVEdit/02.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">VACE+Foley</div><video preload="none" playsinline controls><source data-src="ACompare/VACE_HunyuanFoley/02.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">AVI-Edit</div><video preload="none" playsinline controls><source data-src="ACompare/AVI-Edit/02.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="ACompare/Ours/02_ours.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ===== Comparison 3: Object — dog bark ===== -->
+      <div class="sample-card">
+        <div class="sample-card-header">
+          <span class="sample-index">03</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-object">Object</span> "A dog barks loudly and repeatedly."</div></div>
+        </div>
+        <div class="sample-videos" style="grid-template-columns: repeat(6, 1fr);">
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="ACompare/Source/03_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">AvED</div><video preload="none" playsinline controls><source data-src="ACompare/AvED/03.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">CoherentAVEdit</div><video preload="none" playsinline controls><source data-src="ACompare/CoherentAVEdit/03.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">VACE+Foley</div><video preload="none" playsinline controls><source data-src="ACompare/VACE_HunyuanFoley/03.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">AVI-Edit</div><video preload="none" playsinline controls><source data-src="ACompare/AVI-Edit/03.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="ACompare/Ours/03_ours.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ===== Comparison 5: Single — speech ===== -->
+      <div class="sample-card">
+        <div class="sample-card-header">
+          <span class="sample-index">05</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span> "It just I can't do this. You can. I'm just..." <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span></div></div>
+        </div>
+        <div class="sample-videos" style="grid-template-columns: repeat(6, 1fr);">
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="ACompare/Source/05_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">AvED</div><video preload="none" playsinline controls><source data-src="ACompare/AvED/05.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">CoherentAVEdit</div><video preload="none" playsinline controls><source data-src="ACompare/CoherentAVEdit/05.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">VACE+Foley</div><video preload="none" playsinline controls><source data-src="ACompare/VACE_HunyuanFoley/05.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">AVI-Edit</div><video preload="none" playsinline controls><source data-src="ACompare/AVI-Edit/05.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="ACompare/Ours/05_ours.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ===== Comparison 6: Single — speech ===== -->
+      <div class="sample-card">
+        <div class="sample-card-header">
+          <span class="sample-index">06</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-single">Single</span> "Now that that shit you pulled in town nearly got us all killed." <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span></div></div>
+        </div>
+        <div class="sample-videos" style="grid-template-columns: repeat(6, 1fr);">
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="ACompare/Source/06_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">AvED</div><video preload="none" playsinline controls><source data-src="ACompare/AvED/06.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">CoherentAVEdit</div><video preload="none" playsinline controls><source data-src="ACompare/CoherentAVEdit/06.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">VACE+Foley</div><video preload="none" playsinline controls><source data-src="ACompare/VACE_HunyuanFoley/06.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">AVI-Edit</div><video preload="none" playsinline controls><source data-src="ACompare/AVI-Edit/06.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="ACompare/Ours/06_ours.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ===== Comparison 7: Dual — speech ===== -->
+      <div class="sample-card">
+        <div class="sample-card-header">
+          <span class="sample-index">07</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-dual">Dual</span> "His daddy's name is Forrest, too?" <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span></div></div>
+        </div>
+        <div class="sample-videos" style="grid-template-columns: repeat(6, 1fr);">
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="ACompare/Source/07_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">AvED</div><video preload="none" playsinline controls><source data-src="ACompare/AvED/07.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">CoherentAVEdit</div><video preload="none" playsinline controls><source data-src="ACompare/CoherentAVEdit/07.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">VACE+Foley</div><video preload="none" playsinline controls><source data-src="ACompare/VACE_HunyuanFoley/07.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">AVI-Edit</div><video preload="none" playsinline controls><source data-src="ACompare/AVI-Edit/07.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="ACompare/Ours/07_ours.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+      <!-- ===== Comparison 8: Dual — speech ===== -->
+      <div class="sample-card">
+        <div class="sample-card-header">
+          <span class="sample-index">08</span>
+          <div class="sample-meta"><div class="sample-asr"><span class="tag-cat tag-dual">Dual</span> "I don't want to leave." <span class="sample-audio-prompt"><strong>Audio prompt:</strong> [Speech]. A person is speaking</span></div></div>
+        </div>
+        <div class="sample-videos" style="grid-template-columns: repeat(6, 1fr);">
+          <div class="video-cell"><div class="video-cell-label">Source</div><video preload="none" playsinline controls><source data-src="ACompare/Source/08_source.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">AvED</div><video preload="none" playsinline controls><source data-src="ACompare/AvED/08.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">CoherentAVEdit</div><video preload="none" playsinline controls><source data-src="ACompare/CoherentAVEdit/08.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">VACE+Foley</div><video preload="none" playsinline controls><source data-src="ACompare/VACE_HunyuanFoley/08.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">AVI-Edit</div><video preload="none" playsinline controls><source data-src="ACompare/AVI-Edit/08.mp4" type="video/mp4"></video></div>
+          <div class="video-cell"><div class="video-cell-label">✨ SpongeBob</div><video preload="none" playsinline controls><source data-src="ACompare/Ours/08_ours.mp4" type="video/mp4"></video></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer class="site-footer">
+  <div class="container-narrow">
+    <div style="margin-bottom: 20px;">
+      <span style="font-family: 'Noto Serif', serif; font-size: 22px; font-weight: 700; color: rgba(255,255,255,0.7); letter-spacing: 1px;">SpongeBob</span>
+    </div>
+    <div style="display: flex; justify-content: center; gap: 28px; margin-bottom: 24px; flex-wrap: wrap;">
+      <a href="#hero" style="font-size: 13px;">Home</a>
+      <a href="#results" style="font-size: 13px;">Results</a>
+      <a href="#comparison" style="font-size: 13px;">Comparison</a>
+    </div>
+    <div style="width: 60px; height: 1px; background: linear-gradient(90deg, transparent, rgba(201,168,76,0.4), transparent); margin: 0 auto 20px;"></div>
+    <p style="font-size: 12px; opacity: 0.5;">Sync-Aware Harmonious Audio-Visual Generative Editing</p>
+  </div>
+</footer>
+
+<!-- Scroll to top -->
+<button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <i class="fas fa-chevron-up"></i>
+</button>
+
+<script>
+// ===== Toggle Prompt =====
+function togglePrompt(btn) {
+  var card = btn.closest('.sample-card');
+  var p = card.querySelector('.sample-prompt');
+  p.classList.toggle('show');
+  btn.querySelector('i').className = p.classList.contains('show') ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+}
+
+// ===== Filter Tabs =====
+function updateFilter(filter) {
+  var grid = document.getElementById('resultsGrid');
+  var cards = grid.querySelectorAll('.sample-card');
+  var headers = grid.querySelectorAll('.cat-header');
+  var empty = document.getElementById('resultsEmpty');
+  var count = 0;
+  cards.forEach(function(c) {
+    c.style.display = '';
+    var show = filter === 'all' || c.dataset.cat === filter;
+    c.classList.toggle('hidden', !show);
+    if (show) count++;
+  });
+  headers.forEach(function(h) {
+    h.classList.toggle('hidden', filter !== 'all');
+    h.classList.remove('collapsed');
+    var txt = h.querySelector('.cat-toggle-text');
+    if (txt) txt.textContent = 'Collapse';
+  });
+  if (empty) empty.classList.toggle('show', count === 0);
+}
+document.querySelectorAll('.filter-tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.filter-tab').forEach(function(t) { t.classList.remove('active'); });
+    tab.classList.add('active');
+    updateFilter(tab.dataset.filter);
+  });
+});
+
+// ===== Theme Switcher =====
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.querySelectorAll('.theme-opt').forEach(function(b) {
+    b.classList.toggle('active', b.classList.contains('theme-opt-' + theme));
+  });
+}
+
+
+// ===== TOC Nav: filter category from nav =====
+function tocFilter(cat) {
+  document.querySelectorAll('.filter-tab').forEach(function(t) {
+    t.classList.toggle('active', t.dataset.filter === cat);
+  });
+  updateFilter(cat);
+  document.getElementById('results').scrollIntoView({behavior:'smooth'});
+}
+
+// ===== Scroll Effects =====
+window.addEventListener('scroll', function() {
+  var btn = document.getElementById('scrollTopBtn');
+  var ind = document.querySelector('.scroll-indicator');
+  var toc = document.getElementById('tocNav');
+  var tf = document.getElementById('themeFloat');
+  var y = window.scrollY;
+  var navVis = y > 400;
+  if (btn) btn.classList.toggle('visible', y > 600);
+  if (toc) toc.classList.toggle('visible', navVis);
+  if (tf) tf.classList.toggle('hide', navVis);
+  if (ind) { ind.style.opacity = y > 100 ? '0' : ''; ind.style.pointerEvents = y > 100 ? 'none' : ''; }
+});
+
+// ===== Exclusive video playback =====
+document.addEventListener('play', function(e) {
+  if (e.target.tagName === 'VIDEO') {
+    document.querySelectorAll('video').forEach(function(v) { if (v !== e.target) v.pause(); });
+  }
+}, true);
+
+// ===== Organize cards by category with headers =====
+(function() {
+  var grid = document.getElementById('resultsGrid');
+  var cards = Array.prototype.slice.call(grid.querySelectorAll('.sample-card'));
+  var order = ['object', 'dual', 'single', 'add', 'delete'];
+  var labels = { object: 'Object', dual: 'Dual-Person', single: 'Single-Person', add: 'Addition', delete: 'Deletion' };
+  var icons = { object: 'fa-cube', dual: 'fa-user-group', single: 'fa-user', add: 'fa-plus-circle', delete: 'fa-minus-circle' };
+  var groups = {};
+  order.forEach(function(c) { groups[c] = []; });
+  cards.forEach(function(c) {
+    var cat = c.dataset.cat;
+    if (!groups[cat]) groups[cat] = [];
+    groups[cat].push(c);
+  });
+  grid.innerHTML = '';
+  order.forEach(function(cat) {
+    if (!groups[cat] || groups[cat].length === 0) return;
+    var header = document.createElement('div');
+    header.className = 'cat-header';
+    header.dataset.cat = cat;
+    header.innerHTML = '<div class="cat-header-icon cat-' + cat + '"><i class="fas ' + icons[cat] + '"></i></div>'
+      + '<span class="cat-header-title">' + labels[cat] + '</span>'
+      + '<span class="cat-header-toggle"><i class="fas fa-chevron-down"></i> <span class="cat-toggle-text">Collapse</span></span>';
+    header.addEventListener('click', function() {
+      var cat = this.dataset.cat;
+      var collapsed = this.classList.toggle('collapsed');
+      this.querySelector('.cat-toggle-text').textContent = collapsed ? 'Expand' : 'Collapse';
+      var next = this.nextElementSibling;
+      while (next && !next.classList.contains('cat-header')) {
+        if (next.classList.contains('sample-card') && next.dataset.cat === cat) {
+          next.style.display = collapsed ? 'none' : '';
+        }
+        next = next.nextElementSibling;
+      }
+    });
+    grid.appendChild(header);
+    groups[cat].forEach(function(c) { grid.appendChild(c); });
+  });
+})();
+
+// ===== Lazy Load Media =====
+(function() {
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (!e.isIntersecting) return;
+      var el = e.target;
+      if (el.tagName === 'IMG' && el.dataset.src) {
+        el.src = el.dataset.src;
+        el.removeAttribute('data-src');
+      }
+      if (el.tagName === 'VIDEO') {
+        var sources = el.querySelectorAll('source[data-src]');
+        if (sources.length) {
+          sources.forEach(function(s) { s.src = s.dataset.src; s.removeAttribute('data-src'); });
+          el.load();
+        }
+      }
+      obs.unobserve(el);
+    });
+  }, { rootMargin: '300px' });
+  document.querySelectorAll('img[data-src], video').forEach(function(el) { obs.observe(el); });
+})();
+
+// ===== Init =====
+window.history.scrollRestoration = 'manual';
+window.scrollTo(0, 0);
+
+// ===== Particle System =====
+(function() {
+  const canvas = document.getElementById('particleCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  const COUNT = 55;
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  class P {
+    constructor() { this.reset(); }
+    reset() {
+      this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
+      this.size = Math.random() * 2.5 + 0.5; this.sx = (Math.random()-0.5)*0.4; this.sy = (Math.random()-0.5)*0.4;
+      this.o = Math.random()*0.3+0.08; this.h = 30+Math.random()*15;
+    }
+    update() {
+      this.x += this.sx; this.y += this.sy;
+      if (this.x<0||this.x>canvas.width) this.sx*=-1;
+      if (this.y<0||this.y>canvas.height) this.sy*=-1;
+    }
+    draw() {
+      ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+      ctx.fillStyle=`hsla(${this.h},70%,55%,${this.o})`; ctx.fill();
+    }
+  }
+  for (let i=0;i<COUNT;i++) particles.push(new P());
+  function loop() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for (let i=0;i<particles.length;i++) {
+      particles[i].update(); particles[i].draw();
+      for (let j=i+1;j<particles.length;j++) {
+        const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y, d=Math.sqrt(dx*dx+dy*dy);
+        if (d<140) { ctx.beginPath(); ctx.moveTo(particles[i].x,particles[i].y); ctx.lineTo(particles[j].x,particles[j].y);
+          ctx.strokeStyle=`rgba(201,168,76,${0.06*(1-d/140)})`; ctx.lineWidth=0.5; ctx.stroke(); }
+      }
+    }
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+// ===== Cursor Glow =====
+(function() {
+  const g = document.getElementById('cursorGlow'); if(!g) return;
+  let mx=-500,my=-500;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+  (function upd() { g.style.left=mx+'px'; g.style.top=my+'px'; requestAnimationFrame(upd); })();
+})();
+
+// ===== Progress Bar =====
+window.addEventListener('scroll', () => {
+  const bar = document.getElementById('progressBar'); if(!bar) return;
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  bar.style.width = (h>0 ? (window.scrollY/h)*100 : 0) + '%';
+});
+
+// ===== Scroll Reveal =====
+(function() {
+  const els = document.querySelectorAll('.reveal,.reveal-left,.reveal-right,.reveal-scale,.stagger-children');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
+  els.forEach(el => obs.observe(el));
+})();
+
+// ===== 3D Tilt on Method Cards =====
+document.querySelectorAll('.method-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    const rx = ((e.clientY-r.top-r.height/2)/(r.height/2))*-8;
+    const ry = ((e.clientX-r.left-r.width/2)/(r.width/2))*8;
+    card.style.transform = `perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-6px)`;
+  });
+  card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+});
+
+// ===== Ripple on Filter Tabs =====
+document.querySelectorAll('.filter-tab').forEach(tab => {
+  tab.addEventListener('click', function(e) {
+    const rp = document.createElement('span'); rp.classList.add('ripple');
+    const rc = this.getBoundingClientRect(); const sz = Math.max(rc.width,rc.height);
+    rp.style.width=rp.style.height=sz+'px';
+    rp.style.left=(e.clientX-rc.left-sz/2)+'px'; rp.style.top=(e.clientY-rc.top-sz/2)+'px';
+    this.appendChild(rp); setTimeout(()=>rp.remove(),600);
+  });
+});
+
+// ===== Parallax Hero Shapes =====
+(function() {
+  const hero = document.querySelector('.hero');
+  const shapes = document.querySelectorAll('.hero-shape');
+  if (!hero || !shapes.length) return;
+  window.addEventListener('scroll', () => {
+    if (window.scrollY < hero.offsetTop + hero.offsetHeight) {
+      shapes.forEach((s,i) => { s.style.transform = `translateY(${window.scrollY*(0.1+i*0.05)}px)`; });
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
