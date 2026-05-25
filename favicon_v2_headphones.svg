@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- SpongeBob body - rounder -->
+  <rect x="14" y="12" width="36" height="40" rx="8" fill="#FFE135" stroke="#D4A800" stroke-width="1.5"/>
+  <!-- Holes -->
+  <circle cx="22" cy="22" r="2" fill="#D4B800" opacity="0.4"/>
+  <circle cx="36" cy="18" r="1.8" fill="#D4B800" opacity="0.4"/>
+  <circle cx="26" cy="40" r="2.2" fill="#D4B800" opacity="0.4"/>
+  <circle cx="40" cy="36" r="1.5" fill="#D4B800" opacity="0.4"/>
+  <!-- Eyes -->
+  <ellipse cx="27" cy="28" rx="5.5" ry="6" fill="white" stroke="#333" stroke-width="1.2"/>
+  <ellipse cx="37" cy="28" rx="5.5" ry="6" fill="white" stroke="#333" stroke-width="1.2"/>
+  <circle cx="28" cy="28" r="2.5" fill="#4A90D9"/>
+  <circle cx="38" cy="28" r="2.5" fill="#4A90D9"/>
+  <circle cx="28" cy="27.5" r="1" fill="#111"/>
+  <circle cx="38" cy="27.5" r="1" fill="#111"/>
+  <!-- Nose -->
+  <ellipse cx="32" cy="33" rx="1.5" ry="2" fill="#F5C842"/>
+  <!-- Smile -->
+  <path d="M25 38 Q32 44 39 38" fill="none" stroke="#333" stroke-width="1.8" stroke-linecap="round"/>
+  <!-- Headphones -->
+  <path d="M14 24 Q14 12 32 12 Q50 12 50 24" fill="none" stroke="#555" stroke-width="3" stroke-linecap="round"/>
+  <rect x="10" y="22" width="6" height="10" rx="3" fill="#333"/>
+  <rect x="48" y="22" width="6" height="10" rx="3" fill="#333"/>
+  <!-- Music note -->
+  <g fill="#c9a84c">
+    <circle cx="54" cy="54" r="3"/>
+    <rect x="56.5" y="44" width="2" height="11"/>
+    <path d="M58.5 44 Q62 42 60 47" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+  </g>
+</svg>

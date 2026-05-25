@@ -14,6 +14,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&family=Noto+Serif:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
   <style>
     :root, [data-theme="warm"] {
@@ -227,12 +229,12 @@
     }
     .hero-title {
       font-family: 'Noto Serif', serif;
-      font-size: 56px;
+      font-size: 48px;
       font-weight: 700;
       color: var(--hero-title-color);
-      line-height: 1.15;
-      margin-bottom: 24px;
-      max-width: 960px;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      max-width: 860px;
       margin-left: auto;
       margin-right: auto;
       position: relative;
@@ -882,9 +884,10 @@
       margin-top: 32px;
       position: relative;
       z-index: 1;
-      background: var(--nav-bg);
+      background: var(--tab-bg);
       border-radius: var(--radius);
-      border: 1px solid var(--nav-border);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
     }
     .cat-header::after {
       content: '';
@@ -905,14 +908,14 @@
       font-size: 20px;
       flex-shrink: 0;
       background: rgba(201,168,76,0.15);
-      color: var(--accent-light);
-      border: 1px solid rgba(201,168,76,0.2);
+      color: var(--accent-dark);
+      border: 1px solid rgba(201,168,76,0.25);
     }
     .cat-header-title {
       font-family: 'Noto Serif', serif;
       font-size: 26px;
       font-weight: 700;
-      color: var(--nav-link-color);
+      color: var(--text-dark);
     }
     .cat-header-count {
       font-size: 12px;
@@ -1055,12 +1058,13 @@
 
     /* ===== Responsive ===== */
     @media (max-width: 768px) {
-      .hero-title { font-size: 36px; }
-      .hero-subtitle { font-size: 17px; }
+      .hero-title { font-size: 28px; }
+      .hero-subtitle { font-size: 15px; }
       .teaser-grid { grid-template-columns: 1fr; }
       .method-cards { grid-template-columns: 1fr; }
       .sample-videos { grid-template-columns: repeat(2, 1fr); }
       .hero { min-height: 100vh; padding: 60px 16px; }
+      .toc-links { overflow-x: auto; -webkit-overflow-scrolling: touch; }
     }
 
     /* ===== Animations ===== */
@@ -1370,36 +1374,45 @@
     }
     .toc-nav.visible { transform: translateY(0); }
     .toc-inner {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
       display: flex;
       align-items: center;
       height: 52px;
-      gap: 8px;
+      gap: 12px;
     }
     .toc-logo {
       font-family: 'Noto Serif', serif;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
       background: linear-gradient(135deg, var(--accent), var(--teal));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin-right: 24px;
+      margin-right: 20px;
       flex-shrink: 0;
       text-decoration: none;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toc-logo img {
+      height: 20px;
+      width: 20px;
+      flex-shrink: 0;
     }
     .toc-links {
       display: flex;
       align-items: center;
-      gap: 4px;
-      flex-wrap: wrap;
+      gap: 2px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
     }
     .toc-link {
-      padding: 6px 14px;
+      padding: 5px 11px;
       border-radius: 20px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 500;
       color: var(--nav-link-color);
       text-decoration: none;
@@ -1420,9 +1433,9 @@
     }
     .toc-sep {
       width: 1px;
-      height: 20px;
+      height: 16px;
       background: var(--nav-sep);
-      margin: 0 8px;
+      margin: 0 4px;
       flex-shrink: 0;
     }
 
@@ -1456,17 +1469,17 @@
       font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.3px;
-      color: rgba(255,220,160,0.4);
+      color: var(--nav-link-color);
       transition: all 0.3s cubic-bezier(0.22,1,0.36,1);
       cursor: pointer;
       border: none;
       background: none;
       white-space: nowrap;
     }
-    .theme-opt:hover { color: rgba(255,220,160,0.8); }
+    .theme-opt:hover { color: var(--nav-link-hover); }
     .theme-opt.active {
       background: rgba(201,168,76,0.25);
-      color: #fcd34d;
+      color: var(--nav-link-hover);
     }
   </style>
 </head>
@@ -1487,18 +1500,13 @@
 <!-- ===== Sticky TOC Nav ===== -->
 <nav class="toc-nav" id="tocNav">
   <div class="toc-inner">
-    <a class="toc-logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">SpongeBob</a>
+    <a class="toc-logo" onclick="window.scrollTo({top:0,behavior:'smooth'})"><img src="favicon.svg" style="height:20px;width:20px;">SpongeBob</a>
     <div class="toc-links">
-      <a class="toc-link" href="#results">Results Gallery</a>
-      <div class="toc-sep"></div>
-      <button class="toc-link" data-cat="all" onclick="tocFilter('all')">All</button>
-      <button class="toc-link" data-cat="single" onclick="tocFilter('single')">Single</button>
-      <button class="toc-link" data-cat="dual" onclick="tocFilter('dual')">Dual</button>
-      <button class="toc-link" data-cat="object" onclick="tocFilter('object')">Object</button>
-      <button class="toc-link" data-cat="add" onclick="tocFilter('add')">Addition</button>
-      <button class="toc-link" data-cat="delete" onclick="tocFilter('delete')">Deletion</button>
-      <div class="toc-sep"></div>
+      <a class="toc-link" href="#abstract">Abstract</a>
+      <a class="toc-link" href="#method">Method</a>
+      <a class="toc-link" href="#results">Results</a>
       <a class="toc-link" href="#comparison">Comparison</a>
+      <a class="toc-link" href="#citation">Citation</a>
     </div>
     <div class="theme-switcher theme-switcher-nav" id="themeSwitcher">
       <button class="theme-opt theme-opt-warm active" onclick="setTheme('warm')">☀ Warm</button>
@@ -1518,39 +1526,47 @@
   </div>
   <div class="container">
     <h1 class="hero-title animate-in delay-1">
-      <span class="accent">SpongeBob</span>: Sync-Aware Harmonious Audio-Visual Generative Editing
+      <img src="favicon.svg" alt="" style="height:0.85em; vertical-align:-0.05em; margin-right:10px; display:inline-block;">
+      <span class="accent">SpongeBob</span>: Sync-Aware Harmonious<br>Audio-Visual Generative Editing
     </h1>
     <p class="hero-subtitle animate-in delay-2">
       The first framework for joint audio-visual editing within a unified dual-stream diffusion process
     </p>
 
     <!-- Authors -->
-    <div class="animate-in delay-2" style="margin-top:20px; font-size:15px; color:var(--hero-sub-color); position:relative; z-index:1; line-height:1.8;">
+    <div class="animate-in delay-2" style="margin-top:24px; font-size:15px; color:var(--hero-sub-color); position:relative; z-index:1; line-height:2; max-width:700px; margin-left:auto; margin-right:auto;">
       <span style="font-weight:500;">Sen Liang<sup>1,2†</sup></span>,
       <span style="font-weight:500;">Cong Wang<sup>2†</sup></span>,
       <span style="font-weight:500;">Fengbin Guan<sup>1</sup></span>,
       <span style="font-weight:500;">Zhentao Yu<sup>2</sup></span>,
       <span style="font-weight:500;">Yiting Lu<sup>1</sup></span>,
-      <span style="font-weight:500;">Yuanzhi Wang<sup>2</sup></span>,
+      <span style="font-weight:500;">Yuanzhi Wang<sup>2</sup></span>,<br>
       <span style="font-weight:500;">Yuan Zhou<sup>2</sup></span>,
       <span style="font-weight:500;">Xin Li<sup>1</sup></span>,
       <span style="font-weight:500;">Zhibo Chen<sup>1*</sup></span>
-      <br>
-      <span style="font-size:13px; opacity:0.75;">
-        <sup>1</sup>University of Science and Technology of China&nbsp;&nbsp;
+      <div style="margin-top:6px; font-size:13px; opacity:0.75;">
+        <sup>1</sup>University of Science and Technology of China&nbsp;&nbsp;&nbsp;
         <sup>2</sup>Tencent Hunyuan
-      </span>
-      <br>
-      <span style="font-size:12px; opacity:0.6;">
-        <sup>†</sup>Equal contribution&nbsp;&nbsp;<sup>*</sup>Corresponding author
-      </span>
+      </div>
+      <div style="margin-top:4px; font-size:12px; opacity:0.55;">
+        <sup>†</sup>Equal contribution&nbsp;&nbsp;&nbsp;<sup>*</sup>Corresponding author
+      </div>
+    </div>
+
+    <!-- Links -->
+    <div class="animate-in delay-3" style="margin-top:26px; display:flex; justify-content:center; gap:12px; flex-wrap:wrap; position:relative; z-index:1;">
+      <a href="https://arxiv.org/abs/2505.XXXXX" target="_blank" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; background:rgba(201,168,76,0.12); border:1.5px solid rgba(201,168,76,0.35); border-radius:24px; color:var(--accent-light); font-size:13px; font-weight:600; text-decoration:none; transition:all 0.25s; backdrop-filter:blur(4px);">
+        <i class="fas fa-file-pdf"></i> arXiv Paper
+      </a>
+      <a href="https://github.com/HY-SpongeBob" target="_blank" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; background:rgba(201,168,76,0.12); border:1.5px solid rgba(201,168,76,0.35); border-radius:24px; color:var(--accent-light); font-size:13px; font-weight:600; text-decoration:none; transition:all 0.25s; backdrop-filter:blur(4px);">
+        <i class="fab fa-github"></i> GitHub
+      </a>
+      <a href="#citation" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; background:rgba(201,168,76,0.12); border:1.5px solid rgba(201,168,76,0.35); border-radius:24px; color:var(--accent-light); font-size:13px; font-weight:600; text-decoration:none; transition:all 0.25s; backdrop-filter:blur(4px);">
+        <i class="fas fa-quote-left"></i> BibTeX
+      </a>
     </div>
 
     <div class="glow-line animate-in delay-3"></div>
-    <p class="animate-in delay-3" style="margin-top:28px; font-size:14px; font-weight:700; color:#ff4444; max-width:650px; margin-left:auto; margin-right:auto; line-height:1.7; position:relative; z-index:1; background:rgba(255,68,68,0.1); border:1.5px solid rgba(255,68,68,0.3); border-radius:10px; padding:12px 20px; text-align:justify;">
-      <i class="fas fa-exclamation-triangle" style="margin-right:6px;"></i>
-      <strong>Disclaimer:</strong> All portrait photographs, film clips, and audio recordings presented on this page are used exclusively for non-commercial academic research. They remain the intellectual property of their respective copyright holders. No content may be reproduced, redistributed, or used for any commercial, generative, or identity-related purpose.
-    </p>
   </div>
   <div class="scroll-indicator animate-in delay-4" onclick="document.getElementById('results').scrollIntoView({behavior:'smooth'})">
     <span>Scroll</span>
@@ -1558,6 +1574,41 @@
   </div>
 </section>
 
+
+<!-- ===== Abstract ===== -->
+<div class="section-divider"></div>
+<section class="results-section section-white" id="abstract">
+  <div class="container" style="max-width:900px;">
+    <div class="results-header">
+      <div class="section-title">Abstract</div>
+    </div>
+    <p style="font-size:15px; line-height:1.9; color:var(--text-medium); text-align:justify;">
+      Visual and acoustic events in the physical world are inherently coupled, yet existing video editing methods typically adopt decoupled pipelines, lacking bidirectional modality interaction. This results in two key limitations: (i) audio-visual desynchronization and (ii) contextual conflicts between generated audio and preserved content.
+      To address these, we propose <strong>SpongeBob</strong>, the first end-to-end audio-visual joint editing framework featuring bidirectional cross-modal interaction. For synchronization, a Sync-Aware Mechanism aligns visual edits with sound events via bidirectional attention, temporal alignment, and spatial constraints. For contextual consistency, a Context-Aware Module leverages acoustic and visual context attention to prevent semantic clashes. Additionally, we introduce Sync-Preserving Training and Guidance (SPTG) to enhance alignment without degrading quality.
+      Due to the scarcity of paired data, we construct a scalable data pipeline and a large-scale subject-level dataset. We also propose SpongeBob-Bench for systematic evaluation. Experiments show SpongeBob significantly outperforms existing baselines, improving Sync-C by 30% and Ctx-F1 by 12.5%.
+    </p>
+  </div>
+</section>
+
+<!-- ===== Method ===== -->
+<div class="section-divider"></div>
+<section class="results-section" id="method" style="background: var(--method-bg);">
+  <div class="container" style="max-width:1000px;">
+    <div class="results-header">
+      <div class="section-title">Method</div>
+      <p class="section-subtitle">Overview of the SpongeBob framework</p>
+    </div>
+    <p style="font-size:15px; line-height:1.8; color:var(--text-medium); text-align:justify; margin-bottom:28px;">
+      SpongeBob employs a dual-stream Diffusion Transformer (DiT) that simultaneously edits video and audio within a unified denoising process. The framework comprises three core designs: (1)&nbsp;<strong>Sync-Aware Editing Mechanism</strong> achieves audio-visual alignment through bidirectional cross-modal attention, mask-guided spatial routing, and three-way temporal RoPE unification; (2)&nbsp;<strong>Context-Aware Module</strong> enables the generated audio to explicitly perceive unedited audio-visual context to avoid conflicts with preserved content; (3)&nbsp;<strong>Sync-Preserving Training and Guidance (SPTG)</strong> reduces context conflicts and enhances cross-modal synchronization through multi-task alignment training and two-stage inference guidance.
+    </p>
+    <div style="background:var(--bg-card); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow-md);">
+      <img src="method_overview.png" alt="SpongeBob Framework" style="width:100%; border-radius:var(--radius-sm);">
+    </div>
+    <p style="font-size:13px; color:var(--text-light); text-align:center; margin-top:14px;">
+      <strong>Figure:</strong> Given a source video with an object mask, text instructions, and a reference image, SpongeBob jointly edits the visual content and synthesizes synchronized audio through a dual-stream DiT with sync-aware editing mechanism and context-aware module.
+    </p>
+  </div>
+</section>
 
 <!-- ===== Results Gallery ===== -->
 <div class="section-divider"></div>
@@ -2808,19 +2859,36 @@
   </div>
 </section>
 
+<!-- ===== Citation ===== -->
+<div class="section-divider"></div>
+<section class="results-section section-white" id="citation">
+  <div class="container" style="max-width:800px;">
+    <div class="results-header">
+      <div class="section-title">Citation</div>
+      <p class="section-subtitle">If you find our work useful, please consider citing</p>
+    </div>
+    <div style="position:relative; background:var(--bg-dark); border-radius:var(--radius); padding:24px 28px; box-shadow:var(--shadow-md); overflow:hidden;">
+      <button onclick="navigator.clipboard.writeText(document.getElementById('bibtex').innerText).then(()=>{this.innerHTML='<i class=\'fas fa-check\'></i> Copied!';setTimeout(()=>{this.innerHTML='<i class=\'fas fa-copy\'></i> Copy'},2000)})" style="position:absolute; top:12px; right:14px; background:rgba(201,168,76,0.2); border:1px solid rgba(201,168,76,0.4); color:var(--accent); padding:6px 12px; border-radius:6px; cursor:pointer; font-size:12px; transition:all 0.2s;">
+        <i class="fas fa-copy"></i> Copy
+      </button>
+      <pre id="bibtex" style="margin:0; font-size:13px; line-height:1.7; color:rgba(255,240,210,0.85); font-family:'Courier New',monospace; white-space:pre-wrap; overflow-x:auto;">@article{liang2025spongebob,
+  title={SpongeBob: Sync-Aware Harmonious Audio-Visual Generative Editing},
+  author={Liang, Sen and Wang, Cong and Guan, Fengbin and Yu, Zhentao and Lu, Yiting and Wang, Yuanzhi and Zhou, Yuan and Li, Xin and Chen, Zhibo},
+  journal={arXiv preprint arXiv:2505.XXXXX},
+  year={2025}
+}</pre>
+    </div>
+  </div>
+</section>
+
 <!-- ===== Footer ===== -->
 <footer class="site-footer">
   <div class="container-narrow">
-    <div style="margin-bottom: 20px;">
-      <span style="font-family: 'Noto Serif', serif; font-size: 22px; font-weight: 700; color: rgba(255,255,255,0.7); letter-spacing: 1px;">SpongeBob</span>
-    </div>
-    <div style="display: flex; justify-content: center; gap: 28px; margin-bottom: 24px; flex-wrap: wrap;">
-      <a href="#hero" style="font-size: 13px;">Home</a>
-      <a href="#results" style="font-size: 13px;">Results</a>
-      <a href="#comparison" style="font-size: 13px;">Comparison</a>
-    </div>
-    <div style="width: 60px; height: 1px; background: linear-gradient(90deg, transparent, rgba(201,168,76,0.4), transparent); margin: 0 auto 20px;"></div>
-    <p style="font-size: 12px; opacity: 0.5;">Sync-Aware Harmonious Audio-Visual Generative Editing</p>
+    <span style="font-family: 'Noto Serif', serif; font-size: 16px; font-weight: 600; background: linear-gradient(135deg, rgba(201,168,76,0.8), rgba(223,192,106,0.6)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">SpongeBob</span>
+    <span style="font-size: 12px; opacity: 0.4; margin-left: 10px;">Sync-Aware Harmonious Audio-Visual Generative Editing</span>
+    <p style="font-size: 11px; opacity: 0.3; max-width:600px; margin:16px auto 0; line-height:1.6;">
+      <strong>Disclaimer:</strong> All portrait photographs, film clips, and audio recordings presented on this page are used exclusively for non-commercial academic research. They remain the intellectual property of their respective copyright holders. No content may be reproduced, redistributed, or used for any commercial, generative, or identity-related purpose.
+    </p>
   </div>
 </footer>
 
@@ -2873,7 +2941,19 @@ function setTheme(theme) {
   document.querySelectorAll('.theme-opt').forEach(function(b) {
     b.classList.toggle('active', b.classList.contains('theme-opt-' + theme));
   });
+  sessionStorage.setItem('spongebob-theme-manual', theme);
 }
+
+// Random theme on first visit, re-randomize each session
+(function() {
+  var themes = ['warm', 'classic'];
+  var manual = sessionStorage.getItem('spongebob-theme-manual');
+  if (manual) {
+    setTheme(manual);
+  } else {
+    setTheme(themes[Math.floor(Math.random() * themes.length)]);
+  }
+})();
 
 
 // ===== TOC Nav: filter category from nav =====
@@ -2898,6 +2978,22 @@ window.addEventListener('scroll', function() {
   if (tf) tf.classList.toggle('hide', navVis);
   if (ind) { ind.style.opacity = y > 100 ? '0' : ''; ind.style.pointerEvents = y > 100 ? 'none' : ''; }
 });
+
+// ===== Active nav link highlight on scroll =====
+(function() {
+  var sections = document.querySelectorAll('section[id]');
+  var navLinks = document.querySelectorAll('.toc-links .toc-link[href^="#"]');
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        navLinks.forEach(function(link) {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id);
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -60% 0px', threshold: 0 });
+  sections.forEach(function(sec) { observer.observe(sec); });
+})();
 
 // ===== Exclusive video playback =====
 document.addEventListener('play', function(e) {
